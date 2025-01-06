@@ -1,26 +1,77 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gambar di Pojok Kanan Atas</title>
+    <title>Banner</title>
     <style>
         body {
-            background-color: #333; /* Warna abu-abu gelap */
-            margin: 0; /* Menghilangkan margin default body */
-            display: flex; /* Menggunakan flexbox untuk penempatan */
-            justify-content: flex-start; /* Meletakkan konten ke kanan */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #333;
+            overflow: hidden;
         }
 
-        img {
-            width: 405px;
-            height: 252px;
-            margin-top: 0px; /* Memberi jarak sedikit dari atas */
-            margin-right: 0px; /* Memberi jarak sedikit dari kanan */
+        .image-container {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 405px; /* Adjust as needed */
+            height: 252px; /* Adjust as needed */
+        }
+
+        .image-container img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .image-container img.active {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <img src="pb-image.jpg" alt="Deskripsi Gambar">
+    <div class="image-container">
+        <img src="image/1.jpg" alt="Image 1">
+        <img src="image/2.jpg" alt="Image 2">
+        <img src="image/3.jpg" alt="Image 3">
+        <img src="image/4.jpg" alt="Image 4">
+        <img src="image/5.jpg" alt="Image 5">
+        <img src="image/6.jpg" alt="Image 6">
+        <img src="image/7.jpg" alt="Image 7">
+        <img src="image/8.jpg" alt="Image 8">
+        <img src="image/9.jpg" alt="Image 9">
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.image-container img');
+        let currentIndex = 0;
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+
+            currentIndex = (currentIndex + 1) % images.length;
+
+            images[currentIndex].classList.add('active');
+        }
+
+        // Show the first image
+        images[currentIndex].classList.add('active');
+
+        // Change images every 2.5 seconds
+        setInterval(showNextImage, 3500);
+    </script>
+	<script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+	</script>
 </body>
 </html>
