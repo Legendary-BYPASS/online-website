@@ -35,6 +35,26 @@
         </div>
     </div>
 </section> 
+    <script>
+    document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const key = document.querySelector("input").value;
+
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem("memberInfo", JSON.stringify(data.member));
+            window.location.href = "member.html"; // Arahkan ke halaman informasi member
+        } else {
+            alert("Invalid KEY");
+        }
+    });
+</script>
     </body>
 </body>
 
