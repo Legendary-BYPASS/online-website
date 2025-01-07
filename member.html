@@ -19,37 +19,40 @@
             min-height: 100vh;
         }
 
-        .member-container {
+        .container {
+            display: flex;
+            gap: 20px;
             background-color: #2b2b3b;
             border-radius: 10px;
             padding: 20px;
-            max-width: 400px;
-            width: 100%;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
         }
 
-        .member-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .member-header h1 {
-            font-size: 24px;
-            color: #f1f1f1;
-        }
-
-        .member-info {
+        .box {
+            flex: 1;
+            background-color: #353544;
+            border-radius: 10px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 10px;
+        }
+
+        .box h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #f1f1f1;
+            font-size: 20px;
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background-color: #353544;
+            padding: 8px;
+            background-color: #404052;
             border-radius: 5px;
         }
 
@@ -63,9 +66,9 @@
         }
 
         .buttons {
+            margin-top: 20px;
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
         }
 
         .buttons button {
@@ -93,26 +96,36 @@
 </head>
 
 <body>
-    <div class="member-container">
-        <div class="member-header">
-            <h1>Member Information</h1>
+    <div class="container">
+        <!-- Member Information -->
+        <div class="box">
+            <h2>Member Information</h2>
+            <div id="memberInfo"></div>
         </div>
-        <div class="member-info" id="memberInfo">
-            <!-- Member information rows will be dynamically added here -->
-        </div>
-        <div class="buttons">
-            <button class="view-json" id="viewJson">VIEW JSON</button>
-            <button class="logout" id="logout">LOGOUT</button>
+
+        <!-- Useful Information -->
+        <div class="box">
+            <h2>Useful Information</h2>
+            <div id="usefulInfo"></div>
         </div>
     </div>
 
+    <div class="buttons">
+        <button class="view-json" id="viewJson">VIEW JSON</button>
+        <button class="logout" id="logout">LOGOUT</button>
+    </div>
+
     <script>
+        // Redirect to login if not authenticated
+        if (!localStorage.getItem("memberInfo")) {
+            window.location.href = "index.html"; // Redirect ke login jika tidak ada data
+        }
+
         // Fetch member info from localStorage
         const memberInfo = JSON.parse(localStorage.getItem("memberInfo"));
-
         const memberInfoContainer = document.getElementById("memberInfo");
 
-        // Populate member information dynamically
+        // Populate Member Information dynamically
         for (const key in memberInfo) {
             const row = document.createElement("div");
             row.classList.add("info-row");
@@ -123,6 +136,35 @@
             memberInfoContainer.appendChild(row);
         }
 
+        // Fetch Useful Information
+        async function getUsefulInfo() {
+            const response = await fetch("https://ipapi.co/json/");
+            const data = await response.json();
+
+            const usefulInfoContainer = document.getElementById("usefulInfo");
+            const usefulData = {
+                IP: data.ip,
+                Negara: data.country_name,
+                "Tgl dan Waktu": new Date().toLocaleString(),
+                Kota: data.city,
+                Browser: navigator.appName,
+                "User-Agent": navigator.userAgent,
+                ISP: data.org,
+            };
+
+            for (const key in usefulData) {
+                const row = document.createElement("div");
+                row.classList.add("info-row");
+                row.innerHTML = `
+                    <span class="key">${key}:</span>
+                    <span>${usefulData[key]}</span>
+                `;
+                usefulInfoContainer.appendChild(row);
+            }
+        }
+
+        getUsefulInfo();
+
         // VIEW JSON button functionality
         document.getElementById("viewJson").addEventListener("click", () => {
             alert(JSON.stringify(memberInfo, null, 2));
@@ -131,7 +173,7 @@
         // LOGOUT button functionality
         document.getElementById("logout").addEventListener("click", () => {
             localStorage.removeItem("memberInfo");
-            window.location.href = "index.html"; // Redirect to login page
+            window.location.href = "index.html"; // Redirect to login
         });
     </script>
 </body>
