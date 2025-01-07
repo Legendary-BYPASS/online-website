@@ -66,10 +66,10 @@
         }
 
         .buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            width: 100%; /* Memastikan tombol mengambil lebar penuh */
+        display: flex;
+        justify-content: space-between;
+        width: 100%; /* Memastikan tombol mengambil lebar penuh */
+        margin-top: 20px; /* Jarak dari kontainer di atas */
         }
 
         .buttons button {
@@ -100,18 +100,20 @@
 
 <body>
     <div class="container">
-        <!-- Member Information -->
-        <div class="box">
-            <h2>Member Information</h2>
-            <div id="memberInfo"></div>
-        </div>
-
-        <!-- Useful Information -->
-        <div class="box">
-            <h2>Useful Information</h2>
-            <div id="usefulInfo"></div>
-        </div>
+    <div class="box">
+        <h2>Member Information</h2>
+        <div id="memberInfo"></div>
     </div>
+    <div class="box">
+        <h2>Useful Information</h2>
+        <div id="usefulInfo"></div>
+    </div>
+</div>
+
+<div class="buttons">
+    <button class="view-json" id="viewJson">VIEW JSON</button>
+    <button class="logout" id="logout">LOGOUT</button>
+</div>
 
     <div class="buttons">
         <button class="view-json" id="viewJson">VIEW JSON</button>
