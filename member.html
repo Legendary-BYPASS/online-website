@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Info</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <section>
+        <div class="form-box">
+            <div id="member-info"></div>
+        </div>
+    </section>
+    <script>
+        const member = JSON.parse(localStorage.getItem("memberInfo"));
+        if (!member) {
+            window.location.href = "index.html";
+        } else {
+            document.getElementById("member-info").innerHTML = `
+                <h2>Informasi Member</h2>
+                <p>Nama: ${member.name}</p>
+                <p>Member Key: ${member.key}</p>
+                <p>Tipe: ${member.type}</p>
+                <p>Game: ${member.game}</p>
+                <p>Status: ${member.status}</p>
+                <p>Tanggal Expired: ${new Date(member.expiry_date).toLocaleString()}</p>
+                <p>Serial Aktif: ${member.serial}</p>
+                <p>Uplink: ${member.uplink}</p>
+            `;
+        }
+    </script>
+</body>
+
+</html>
