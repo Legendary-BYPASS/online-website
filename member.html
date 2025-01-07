@@ -21,6 +21,7 @@
 
         .container {
             display: flex;
+            flex-direction: column; /* Mengubah menjadi kolom */
             gap: 20px;
             background-color: #2b2b3b;
             border-radius: 10px;
@@ -79,6 +80,8 @@
             cursor: pointer;
             color: #fff;
             transition: 0.3s;
+            flex: 1; /* Membuat tombol memiliki lebar yang sama */
+            margin: 0 5px; /* Memberikan jarak antar tombol */
         }
 
         .buttons .view-json {
@@ -108,11 +111,11 @@
             <h2>Useful Information</h2>
             <div id="usefulInfo"></div>
         </div>
-    </div>
 
-    <div class="buttons">
-        <button class="view-json" id="viewJson">VIEW JSON</button>
-        <button class="logout" id="logout">LOGOUT</button>
+        <div class="buttons">
+            <button class="view-json" id="viewJson">VIEW JSON</button>
+            <button class="logout" id="logout">LOGOUT</button>
+        </div>
     </div>
 
     <script>
@@ -131,7 +134,7 @@
             row.classList.add("info-row");
             row.innerHTML = `
                 <span class="key">${key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ")}:</span>
-                <span>${memberInfo[key]}</span>
+                < span>${memberInfo[key]}</span>
             `;
             memberInfoContainer.appendChild(row);
         }
@@ -148,7 +151,7 @@
                 "Tgl dan Waktu": new Date().toLocaleString(),
                 Kota: data.city,
                 Browser: navigator.appName,
-                "User-Agent": navigator.userAgent,
+                "User -Agent": navigator.userAgent,
                 ISP: data.org,
             };
 
