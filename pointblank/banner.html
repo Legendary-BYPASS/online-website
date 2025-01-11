@@ -17,7 +17,7 @@
         }
 
         .image-container {
-            position: absolute;
+            position: relative; /* Changed to relative */
             top: 0px;
             left: 0px;
             width: 405px; /* Adjust as needed */
@@ -28,12 +28,11 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
+            opacity: 0; /* Initially hidden */
         }
 
         .image-container img.active {
-            opacity: 1;
+            opacity: 1; /* Only active image is visible */
         }
     </style>
 </head>
@@ -56,22 +55,16 @@
 
         function showNextImage() {
             images[currentIndex].classList.remove('active');
-
             currentIndex = (currentIndex + 1) % images.length;
-
             images[currentIndex].classList.add('active');
         }
 
-        // Show the first image
-        images[currentIndex].classList.add('active');
-
-        // Change images every 2.5 seconds
+        images[currentIndex].classList.add('active'); // Show the first image initially
         setInterval(showNextImage, 3500);
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
     </script>
-	<script>
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-	</script>
 </body>
 </html>
