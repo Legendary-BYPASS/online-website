@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banner dengan Tombol</title>
+    <title>Banner Sederhana</title>
     <style>
         body {
             margin: 0;
@@ -20,48 +20,71 @@
             position: relative;
             width: 405px; /* Sesuaikan dengan ukuran gambar */
             height: 252px; /* Sesuaikan dengan ukuran gambar */
+            overflow: hidden;
+        }
+
+        .image-container input[type="radio"] {
+            display: none;
         }
 
         .image-container img {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: absolute;
+            top: 0;
+            left: 0;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            z-index: 0;
         }
 
-        .image-container img.active {
+        /* Tampilkan gambar aktif berdasarkan radio button */
+        #image-1:checked ~ img:nth-child(2),
+        #image-2:checked ~ img:nth-child(3),
+        #image-3:checked ~ img:nth-child(4),
+        #image-4:checked ~ img:nth-child(5),
+        #image-5:checked ~ img:nth-child(6),
+        #image-6:checked ~ img:nth-child(7),
+        #image-7:checked ~ img:nth-child(8),
+        #image-8:checked ~ img:nth-child(9),
+        #image-9:checked ~ img:nth-child(10) {
             opacity: 1;
+            z-index: 1;
         }
 
-        .buttons {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-        }
-
-        .buttons button {
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: #fff;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .buttons button:hover {
+        /* Default gambar pertama aktif */
+        #image-1:checked ~ img:nth-child(2) {
             opacity: 1;
+            z-index: 1;
+        }
+
+        /* Radio Button Navigasi Otomatis */
+        .image-container input[type="radio"]:checked ~ input[type="radio"] + input[type="radio"] {
+            animation: autoSlide 5s infinite;
+        }
+
+        /* Navigasi otomatis ke gambar berikutnya */
+        @keyframes autoSlide {
+            0% { }
+            100% { }
         }
     </style>
 </head>
 <body>
     <div class="image-container">
-        <img src="image/1.jpg" alt="Image 1" class="active">
+        <!-- Radio Button untuk navigasi gambar -->
+        <input type="radio" name="image-control" id="image">
+                <input type="radio" name="image-control" id="image-1" checked>
+        <input type="radio" name="image-control" id="image-2">
+        <input type="radio" name="image-control" id="image-3">
+        <input type="radio" name="image-control" id="image-4">
+        <input type="radio" name="image-control" id="image-5">
+        <input type="radio" name="image-control" id="image-6">
+        <input type="radio" name="image-control" id="image-7">
+        <input type="radio" name="image-control" id="image-8">
+        <input type="radio" name="image-control" id="image-9">
+
+        <!-- Gambar -->
+        <img src="image/1.jpg" alt="Image 1">
         <img src="image/2.jpg" alt="Image 2">
         <img src="image/3.jpg" alt="Image 3">
         <img src="image/4.jpg" alt="Image 4">
@@ -70,32 +93,6 @@
         <img src="image/7.jpg" alt="Image 7">
         <img src="image/8.jpg" alt="Image 8">
         <img src="image/9.jpg" alt="Image 9">
-
-        <div class="buttons">
-            <button onclick="prevImage()">Previous</button>
-            <button onclick="nextImage()">Next</button>
-        </div>
     </div>
-
-    <script>
-        let currentIndex = 0;
-        const images = document.querySelectorAll('.image-container img');
-
-        function showImage(index) {
-            images.forEach((img, i) => {
-                img.classList.toggle('active', i === index);
-            });
-        }
-
-        function nextImage() {
-            currentIndex = (currentIndex + 1) % images.length;
-            showImage(currentIndex);
-        }
-
-        function prevImage() {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            showImage(currentIndex);
-        }
-    </script>
 </body>
 </html>
