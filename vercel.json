@@ -1,3 +1,5 @@
 {
+    "version": 2,
     "rewrites": [{ "source": "/login", "destination": "/api/server.js" }]
+    "routes": [{ "src": "/api/telegram", "dest": "/api/telegram.js" }]
 }
