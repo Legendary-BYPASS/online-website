@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-  const allowedUserAgent = "BlazeM4CK.Mozilla: BrandedbyTheWorld 3.16";  // Gantilah dengan User-Agent aplikasi Anda
+  const allowedUserAgent = "BlazeM4CKMozillaChromium";  // Gantilah dengan User-Agent aplikasi Anda
 
   // Periksa User-Agent dari request
   const userAgent = req.headers['user-agent'] || '';
