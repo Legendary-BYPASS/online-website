@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-  const allowedUserAgent = "BlazeM4CK/1.0 Windows_10_DotNet_8";  // Gantilah dengan User-Agent aplikasi Anda
+  const allowedUserAgent = "BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)";  // Gantilah dengan User-Agent aplikasi Anda
 
   // Periksa User-Agent dari request
   const userAgent = req.headers['user-agent'] || '';
