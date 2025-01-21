@@ -1,7 +1,7 @@
 export default function handler(req, res) {
   const now = new Date();
-  const jakartaTime = now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
-
+  const jakartaTime = now.toISOString();
+  
   // Ambil IP dari header
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
