@@ -1,6 +1,6 @@
 {
   "version": 2,
   "rewrites": [
-    { "src": "/api/time", "dest": "/api/time.js" }
+    { "source": "/api/time", "destination": "/api/time.js" }
   ]
 }
