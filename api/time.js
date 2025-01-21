@@ -1,4 +1,13 @@
 export default function handler(req, res) {
+  const allowedUserAgent = "BlazeM4CK.Mozilla: BrandedbyTheWorld 3.16";  // Gantilah dengan User-Agent aplikasi Anda
+
+  // Periksa User-Agent dari request
+  const userAgent = req.headers['user-agent'] || '';
+
+  if (userAgent !== allowedUserAgent) {
+    return res.status(403).json({ error: "Access Denied" });
+  }
+  
   const now = new Date();
   const jakartaTime = now.toISOString();
   
