@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/api/time", "destination": "/api/time.js" }
-  ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.js" }
   ]
