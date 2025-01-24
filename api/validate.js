@@ -9,6 +9,13 @@ export default function handler(req, res) {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
+    const allowedUserAgent = "BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)"; 
+    const userAgent = req.headers['user-agent'] || '';
+
+    if (userAgent !== allowedUserAgent) {
+      return res.status(403).json({ error: "Access Denied" });
+    }
+    
     const { hwid } = req.body;
     for (const pc in hwidDatabase) {
         if (hwidDatabase[pc].hwid === hwid) {
