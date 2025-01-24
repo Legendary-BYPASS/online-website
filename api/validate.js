@@ -1,5 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 24 * 60 * 60 * 1000,
+    max: 20
+});
+
+app.use('/api/validate', limiter);
 
 const dataPath = path.join(__dirname, '../hwidDatabase.json');
 let hwidDatabase = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
