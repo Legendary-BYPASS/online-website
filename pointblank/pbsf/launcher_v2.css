@@ -1,0 +1,88 @@
+@charset "utf-8";
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700");
+
+*, *:before, *:after {-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, 
+b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, input, select, textarea, button, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, header, footer, hgroup, menu, nav, output, 
+ruby, section, summary, time, mark, audio, video {margin: 0; padding: 0; vertical-align: baseline; border: 0; font-family: Tahoma, sans-serif;}
+
+/* HTML5 */
+article, aside, hgroup, header, footer, figure, figcaption, nav, section,time, mark, canvas, video, audio, details, summary {display: block;}
+
+html {height: 100%;  overflow: hidden; }
+body {height: 100%; font-size: 16px; font-weight: 400; line-height: 1; background: #0f090b; /* IOS */ -webkit-text-size-adjust: none;  overflow: hidden; }
+
+h1, h2, h3, h4, h5, h6 {font-weight: 400; text-transform: uppercase;}
+ol, ul, li {list-style: none;}
+ul {font-size: 0; letter-spacing: -4px;}
+blockquote, q {quotes: none;}
+blockquote:before, blockquote:after, q:before, q:after {content: ''; content: none;}
+
+table {border-collapse: collapse; border-spacing: 0; table-layout: fixed;}
+table caption {display: none;}
+
+a {text-decoration: none; display: inline-block;}
+a:hover {transition: 0.4s ease-in-out;}
+img {line-height: inherit; vertical-align: top;}
+
+/* LAUNCHER ASLI (787px, 416px) */
+.launcher {width: 746px; height: 352px; text-align: left; overflow: hidden; background: #0E151D no-repeat 50% 50%; position: relative; -ms-overflow-style: none; &::-webkit-scrollbar {display: none !important; } }
+.launcher .topClient {height: 28px;}
+.launcher .webArea {padding: 0 19px 0 18px;}
+.launcher .webArea .top {height: 55px; padding-top: 25px; box-sizing: content-box;}
+.launcher .webArea .top:after {clear: both;}
+.launcher .webArea .top ul li {display: inline-block; margin-left: 5px; zoom:1;*display:inline}
+.launcher .webArea .top ul li:first-child {margin-left: 0;}
+.launcher .webArea .top ul li a {dispaly: block; width: 35px; height: 35px;}
+.launcher .webArea .top .sns {float: left;}
+.launcher .webArea .top .sns .discord a {background: url(http://launcher.great-site.net/home/images/sns_discord.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .discord a:after {content: url(http://launcher.great-site.net/home/images/sns_discord_ov.jpg); display: none; width: 0; height: 0;}
+.launcher .webArea .top .sns .discord a:hover {background: url(http://launcher.great-site.net/home/images/sns_discord_ov.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .facebook a {background: url(http://launcher.great-site.net/home/images/sns_facebook.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .facebook a:after {content: url(http://launcher.great-site.net/home/images/sns_facebook_ov.jpg); display: none; width: 0; height: 0;}
+.launcher .webArea .top .sns .facebook a:hover {background: url(http://launcher.great-site.net/home/images/sns_facebook_ov.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .instagram a {background: url(http://launcher.great-site.net/home/images/sns_instagram.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .instagram a:after {content: url(http://launcher.great-site.net/home/images/sns_instagram_ov.jpg); display: none; width: 0; height: 0;}
+.launcher .webArea .top .sns .instagram a:hover {background: url(http://launcher.great-site.net/home/images/sns_instagram_ov.jpg) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .youtube a {background: url(http://launcher.great-site.net/home/images/wa.png) no-repeat 50% 50%;}
+.launcher .webArea .top .sns .youtube a:after {content: url(http://launcher.great-site.net/home/images/wa_ov.png); display: none; width: 0; height: 0;}
+.launcher .webArea .top .sns .youtube a:hover {background: url(http://launcher.great-site.net/home/images/wa_ov.png) no-repeat 50% 50%;}
+.launcher .webArea .top .groupBtn {float: right;}
+.launcher .webArea .top .groupBtn li a {background: #0053c5; background-repeat: no-repeat; background-position: 50% 50%;}
+.launcher .webArea .top .groupBtn li a:hover {background-color: #007eff;}
+.launcher .webArea .top .groupBtn .home a {background-image: url(http://launcher.great-site.net/home/images/ico_home.png);}
+.launcher .webArea .top .groupBtn .user a {background-image: url(http://launcher.great-site.net/home/images/ico_user.png);}
+.launcher .webArea .top .groupBtn .cash a {background-image: url(http://launcher.great-site.net/home/images/ico_cash.png);}
+
+.launcher .webArea .banner {height: 220px;}
+.launcher .webArea .banner .banner_1 {position: relative; float: left; width: 400px; height: 100%;}
+.launcher .webArea .banner .banner_1 .gallery {position: relative; width: 100%; height: 100%;} 
+.launcher .webArea .banner .banner_1 .gallery li {position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; opacity: 0; filter: alpha(opacity=0);}
+.launcher .webArea .banner .banner_1 .gallery li.active {z-index: 2;}
+.launcher .webArea .banner .banner_1 .gallery li img{width: 100%; height: 100%;}
+.launcher .webArea .banner .banner_1 .controller {position: absolute; left: 50%; bottom: 11px; margin-left: -149.5px; width: 299px; text-align: center; z-index: 3;} 
+.launcher .webArea .banner .banner_1 .controller li {display: inline-block; margin-left: 5px; zoom:1;*display:inline}
+.launcher .webArea .banner .banner_1 .controller li:first-child {margin-left: 0;}
+.launcher .webArea .banner .banner_1 .controller a {display: block; position: relative; width: 10px; height: 10px; background-image: url(http://launcher.great-site.net/home/images/bullet.png); background-repeat: no-repeat; z-index: 4;}
+.launcher .webArea .banner .banner_1 .controller a.active {background-image: url(http://launcher.great-site.net/home/images/bullet_on.png);}
+.launcher .webArea .banner .banner_1 .controller a img {position: absolute; left: -4px; top: -4px; z-index: -1;}
+
+.launcher .webArea .banner .notice {float: right; width: 294px; height: 100%;}
+.launcher .webArea .banner .notice .list {margin-left: 20px; margin-top: 20px; width: 255px; letter-spacing: 0;}
+.launcher .webArea .banner .notice .list li {position: relative; height: 19px; line-height: 19px; font-size: 13px; font-weight: 400; color: #fff; overflow: hidden; text-overflow: ellipsis; word-wrap: normal; white-space: nowrap;}
+.launcher .webArea .banner .notice .list li p {float: left;}
+.launcher .webArea .banner .notice .list li .tit {width: 190px;}
+.launcher .webArea .banner .notice .list li .tit a {width: 180px; line-height: 27px; font-size: 13px; font-weight: 400; color: #fff; overflow: hidden; text-overflow: ellipsis; word-wrap: normal; white-space: nowrap;}
+.launcher .webArea .banner .notice .list li .tit strong {font-weight: 400; color: #5bb4ff;}
+.launcher .webArea .banner .notice .list li .date {width: 65px; padding-top: 2px; font-size: 11px; color: #5bb4ff; text-align: right;}
+.launcher .webArea .banner .notice .list li:hover {font-style: italic;}
+.launcher .webArea .banner .notice .list li:hover p, .launcher .webArea .banner .notice .list li:hover p a, .launcher .webArea .banner .notice .list li:hover .tit strong {text-decoration: underline;}
+.launcher .webArea .banner .notice .banner_2 {margin-left: 20px; margin-top: 14px; width: 254px; height: 75px; background: #000;}
+
+.launcher .webArea .bottom {width: 100%; padding-top: 15px; text-align: center;}
+.mem {
+  font-size: 2em; /* Ukuran teks bisa disesuaikan */
+  font-weight: bold;
+  color: #333; /* Warna teks bisa disesuaikan */
+}
