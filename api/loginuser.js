@@ -6,24 +6,28 @@ export default async function handler(req, res) {
 
   const now = new Date();
 
-  // Ambil user dengan HWID yang cocok
+  // Ambil user dari Supabase
   const { data, error } = await supabase
-    .from('users') // ganti dengan nama tabel kamu
+    .from('FivePrivate') // nama tabel kamu
     .select('*')
     .eq('hwid', hwid)
     .single();
 
   if (error || !data) return res.status(403).send('INVALID');
 
-  const expDate = new Date(data.expires.replace(' ', 'T') + ':00Z');
+  const expDate = new Date(data.expires);
 
   if (expDate < now) {
-    // Hapus user yang expired
-    await supabase.from('users').delete().eq('id', data.id);
+    // Hapus user expired
+    await supabase.from('FivePrivate').delete().eq('hwid', hwid);
     return res.status(403).send('EXPIRED');
   }
 
-  // Format mirip raw data.txt
-  const response = `${data.username}|${data.expires}|${data.hwid}`;
+  const response = `${data.username}|${formatDate(expDate)}|${data.hwid}`;
   return res.status(200).send(response);
+}
+
+function formatDate(date) {
+  const pad = (n) => n.toString().padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
