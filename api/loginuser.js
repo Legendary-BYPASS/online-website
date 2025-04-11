@@ -1,9 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// Untuk fetch dari server
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-
 export default async function handler(req, res) {
   const { hwid } = req.query;
   if (!hwid) return res.status(400).send('NO_HWID');
@@ -19,35 +16,23 @@ export default async function handler(req, res) {
     return res.status(500).send('SERVER_ERROR');
   }
 
-  // Ambil waktu server dari API waktu milikmu
-  let now;
-  try {
-    const response = await fetch('https://apiku-online.vercel.app/api/time', {
-      headers: {
-        'User-Agent': 'BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)'
-      }
-    });
-    const data = await response.json();
-    now = new Date(data.time); // contoh format: "2025-12-12T23:50:00"
-  } catch (err) {
-    console.error('[ERROR] Gagal ambil waktu server:', err);
-    return res.status(500).send('WAKTU_TIDAK_TERSEDIA');
-  }
+  const now = new Date();
 
   const newLines = [];
   let matchedLine = null;
 
   for (const line of lines) {
     const [username, expires, storedHwid] = line.trim().split('|');
-    const expDate = new Date(expires);
 
-    if (expDate < now) continue; // Hapus user expired
-    if (storedHwid === hwid) matchedLine = line; // Cek HWID cocok
+    // Format waktu: "YYYY-MM-DD HH:mm" => jadi "YYYY-MM-DDTHH:mm:00Z"
+    const expDate = new Date(expires.replace(' ', 'T') + ':00Z');
+
+    if (expDate < now) continue; // skip expired user
+    if (storedHwid === hwid) matchedLine = line;
 
     newLines.push(`${username}|${expires}|${storedHwid}`);
   }
 
-  // Simpan ulang hanya data yang masih aktif
   try {
     fs.writeFileSync(filePath, newLines.join('\n'));
   } catch (err) {
@@ -56,7 +41,7 @@ export default async function handler(req, res) {
   }
 
   if (matchedLine) {
-    return res.status(200).send(matchedLine); // Kirim baris mentah ke WinFormApp
+    return res.status(200).send(matchedLine);
   } else {
     return res.status(403).send('INVALID');
   }
