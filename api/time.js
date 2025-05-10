@@ -1,23 +1,44 @@
+import crypto from 'crypto';
+
+const ALLOWED_USER_AGENT = "BlazeM4CK/2.1 (Linux; Ubuntu 24.04; .NET 8.0; support@blazemack.com)";
+const BEARER_TOKEN = process.env.API_SECRET;
+const HMAC_SECRET = process.env.HMAC_SECRET;
+
+function isValidSignature(timestamp, clientSignature) {
+  const now = Date.now();
+  const timeDiff = Math.abs(now - parseInt(timestamp, 10));
+
+  if (timeDiff > 60000) return false; // 1 menit toleransi waktu
+
+  const hmac = crypto.createHmac('sha256', HMAC_SECRET);
+  hmac.update(timestamp);
+  const expectedSignature = hmac.digest('hex');
+
+  return expectedSignature === clientSignature;
+}
+
 export default function handler(req, res) {
-  const allowedUserAgent = "BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)";  // Gantilah dengan User-Agent aplikasi Anda
-
-  // Periksa User-Agent dari request
   const userAgent = req.headers['user-agent'] || '';
+  const authHeader = req.headers['authorization'] || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  const timestamp = req.headers['x-timestamp'];
+  const signature = req.headers['x-signature'];
 
-  if (userAgent !== allowedUserAgent) {
-    return res.status(403).json({ error: "Access Denied" });
+  if (userAgent !== ALLOWED_USER_AGENT) {
+    return res.status(403).send("Invalid User-Agent");
   }
-  
-  const now = new Date();
-  const jakartaTime = now.toISOString();
-  
-  // Ambil IP dari header
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-  res.status(200).json({
-    time: jakartaTime,
-    ip: ip || 'Unknown',
-    country: 'Unavailable',
-    city: 'Unavailable',
-  });
+  if (token !== BEARER_TOKEN) {
+    return res.status(403).send("Invalid Bearer Token");
+  }
+
+  if (!timestamp || !signature || !isValidSignature(timestamp, signature)) {
+    return res.status(403).send("Invalid Signature or Timestamp");
+  }
+
+  const now = new Date().toISOString();
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown';
+
+  res.setHeader('Content-Type', 'text/plain');
+  res.status(200).send(`${now}\n${ip}`);
 }
