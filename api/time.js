@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
-const ALLOWED_USER_AGENT = "BlazeM4CK/2.1 (Linux; Ubuntu 24.04; .NET 8.0; support@blazemack.com)";
-const BEARER_TOKEN = process.env.API_SECRET;
+const ALLOWED_USER_AGENT = process.env.UA_SECRET;
+const BEARER_TOKEN = process.env.BEARER_SECRET;
 const HMAC_SECRET = process.env.HMAC_SECRET;
 
 function isValidSignature(timestamp, clientSignature) {
