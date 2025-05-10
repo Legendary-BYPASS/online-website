@@ -1,4 +1,4 @@
-SERVER FIVEPRIVATE
+SERVER FIVEPRIVATE CHEAT POINTBLANK
 By BlazeM4CK 2025
 
 ;----------DEFINE-SERVER----------------
@@ -9,14 +9,13 @@ By BlazeM4CK 2025
 STATUS=0
 
 ;----------LOAD-CONFIGURATION-----------
-MD5=b87675d3d5293f4e5a88ed4026a850c7
+MD5=b87675d3d5293f4e5a88ed4026a850c7(v3.3)|62ee9411cbcca97288398f5335da6f5a(v3.2)|d147a2860df6c8d2d265df2f66da062d(v3.3.NEW)
 VER=3.2.0.0
 URL-UPT=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/FivePrivate.zip
-URL-LOGIN=https://raw.githubusercontent.com/Legendary-BYPASS/online-website/refs/heads/main/data/data-login.txt
-URL-LOGIN-BACKUP=keliru cok! wwkwk gk usah dipake
+URL-LOGIN=https://pastebin.com/raw/K8rm2ESh
 URL-UA=BlazeM4CK/2.1 (Linux; Ubuntu 20.04; .NET 8.0; support@blazem4ck.com)
 URL-TIME=https://apiku-online.vercel.app/api/time
-URL-SCRIPT=dummyhehe
+URL-SCRIPT=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/akuFull.py
 URL-SCRIPT-368=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/aku368.py
 URL-SCRIPT-316=https://github.com/Dwyyee/Trash-Upload/releases/download/rat/aku316.py
 URL-PYTHON=https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe
