@@ -40,9 +40,9 @@ export default async function handler(req, res) {
       }
     }
 
-    return res.status(404).send("HWID tidak ditemukan");
+    return res.status(200).send("HWID tidak ditemukan");
 
   } catch (err) {
-    return res.status(500).send("Server error");
+    return res.status(200).send("Server sedang dalam pemeliharaan");
   }
 }
