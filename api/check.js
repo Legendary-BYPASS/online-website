@@ -10,7 +10,9 @@ export default async function handler(req, res) {
   const pastebinURL = 'https://pastebin.com/raw/R50rMXKq';
 
   try {
-    const response = await fetch(pastebinURL);
+    const response = await fetch(`${pastebinURL}?t=${Date.now()}`, {
+  cache: 'no-store' // Next.js specific
+});
     const data = await response.text();
 
     const lines = data.split('\n');
