@@ -1,61 +1,240 @@
 <!DOCTYPE html>
-<html lang='en'>
-
+<html lang="id">
 <head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>APIKU-ONLINE | BlazeM4CK</title>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <link rel='stylesheet' href='style.css'>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BlazeM4CK Server</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      background-color: #12141a;
+      color: #f0f0f0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle, rgba(35,39,45,0.9) 0%, rgba(18,20,26,1) 70%);
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      background-color: #1c1e24;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: white;
+      user-select: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background-color: #e50914;
+      color: white;
+      font-weight: 900;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      font-family: monospace;
+      letter-spacing: 0.1em;
+    }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 28px;
+    }
+
+    nav a {
+      color: #ccc;
+      font-weight: 500;
+      text-decoration: none;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      padding: 8px 0;
+      position: relative;
+      transition: color 0.25s ease;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: #e50914;
+    }
+
+    /* Masuk button */
+    .btn-masuk {
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn-masuk:hover,
+    .btn-masuk:focus {
+      background-color: #b20710;
+    }
+
+    /* Main Hero Section */
+    main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 24px 120px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+      user-select: none;
+    }
+
+    .welcome-text {
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: #d2d2d2;
+      margin-bottom: 16px;
+      letter-spacing: 0.03em;
+    }
+
+    .title {
+      font-weight: 900;
+      font-size: 3.5rem;
+      margin-bottom: 8px;
+      line-height: 1.1;
+      color: white;
+      user-select: text;
+    }
+
+    .title .red-text {
+      color: #e50914;
+      margin-right: 6px;
+    }
+
+    .subtitle {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 40px;
+      color: #bbb;
+      letter-spacing: 0.06em;
+    }
+
+    .btn-download {
+      background-color: #e50914;
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 6px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .btn-download:hover,
+    .btn-download:focus {
+      background-color: #b20710;
+    }
+
+    /* Responsive */
+    @media (max-width: 767px) {
+      header {
+        padding: 0 16px;
+        height: 56px;
+      }
+
+      nav {
+        display: none; /* Assume hamburger menu for smaller screen */
+      }
+
+      main {
+        padding: 60px 16px 80px;
+        max-width: 100%;
+      }
+
+      .title {
+        font-size: 2.5rem;
+      }
+
+      .btn-download {
+        width: 100%;
+        padding: 14px 0;
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1439px) {
+      main {
+        padding: 100px 32px 140px;
+      }
+    }
+
+    @media (min-width: 1440px) {
+      main {
+        max-width: 900px;
+        padding: 120px 40px 160px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header>
+    <a href="#" class="logo" aria-label="Fake Games homepage">
+      <div class="logo-icon" aria-hidden="true">BZ</div>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a href="#" tabindex="0">TAMBAH AKUN</a>
+      <a href="#" tabindex="0">HWID</a>
+      <a href="#" tabindex="0">BANNED</a>
+      <a href="#" tabindex="0">TUTORIAL</a>
+    </nav>
+    <button class="btn-masuk" aria-label="Masuk ke akun">SUPPORT</button>
+  </header>
 
-    <body>
-        <section>
-    <div class="form-box">
-        <div class="form-value">
-            <form>
-                <h2>Login Member</h2>
-                <div class="inputbox">
-                    <ion-icon name="key-outline"></ion-icon>
-                    <input type="text" required>
-                    <label>KEY</label>
-                </div>
-                <div class="forget">
-                    <label><input type="checkbox">Remember Me</label>
-                    <a href="#">Forgot Key</a>
-                </div>
-                <button>Log In</button>
-                <div class="register">
-                    <p>Don't have an account? <a href="#">Sign Up</a></p>
-                </div>
-            </form>
-        </div>
-    </div>
-</section> 
-    <script>
-    document.querySelector("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const key = document.querySelector("input").value;
-
-        const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("memberInfo", JSON.stringify(data.member));
-            window.location.href = "member.html"; // Arahkan ke halaman informasi member
-        } else {
-            alert("Invalid KEY");
-        }
-    });
-</script>
-    </body>
+  <main role="main">
+    <div class="welcome-text">Selamat datang di</div>
+    <h1 class="title"><span class="red-text">BLAZEMACK</span>SERVER</h1>
+    <div class="subtitle">Komunitas sejak 2003</div>
+    <button class="btn-download" aria-label="Download sekarang">LOGIN SEKARANG</button>
+  </main>
 </body>
-
 </html>
