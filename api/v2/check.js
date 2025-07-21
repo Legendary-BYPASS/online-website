@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     const lines = data.trim().split('\n');
 
     const statusLine = lines[0];
-    const statusMatch = statusLine.match(/^STATUS=(\d)$/);
+    const statusMatch = statusLine.match(/STATUS\s*=\s*(\d+)/);
     const statusCode = statusMatch ? parseInt(statusMatch[1]) : -1;
 
     if (statusCode === 2) {
