@@ -1,5 +1,0 @@
-{
-  "PC-1": { "hwid": "ABC123DEF456", "expires": "2025-01-30" },
-  "PC-2": { "hwid": "XYZ789GHI012", "expires": "2025-02-15" },
-  "PC-3": { "hwid": "HAHA", "expires": "2024-02-15" }
-}
