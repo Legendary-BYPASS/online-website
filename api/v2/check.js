@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 
-const PASTEBIN_URL = 'https://pastebin.com/raw/mycode';
-const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8'); // 32 bytes
-const AES_IV = Buffer.from(process.env.AES_IV, 'utf8');   // 16 bytes
+const PASTEBIN_URL = 'https://pastebin.com/raw/FCCNe66k';
+const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8'); // 32 byte
+const AES_IV = Buffer.from(process.env.AES_IV, 'utf8');   // 16 byte
 
 function encrypt(text) {
   const cipher = crypto.createCipheriv('aes-256-cbc', AES_KEY, AES_IV);
@@ -22,12 +22,25 @@ export default async function handler(req, res) {
     });
 
     const data = await response.text();
-    const now = new Date().toISOString(); // Lebih konsisten dengan C#
-
     const lines = data.trim().split('\n');
 
-    for (const line of lines) {
-      const [user, expiryStr, storedHwid] = line.trim().split('|');
+    const statusLine = lines[0];
+    const statusMatch = statusLine.match(/^STATUS=(\d)$/);
+    const statusCode = statusMatch ? parseInt(statusMatch[1]) : -1;
+
+    if (statusCode === 2) {
+      return res.status(200).send("Maintenance");
+    } else if (statusCode === 1) {
+      return res.status(200).send("Free");
+    } else if (statusCode !== 0) {
+      return res.status(200).send("Error");
+    }
+
+    // Proses login normal (status = 0)
+    const now = new Date().toISOString();
+
+    for (let i = 1; i < lines.length; i++) {
+      const [user, expiryStr, storedHwid] = lines[i].trim().split('|');
 
       if (storedHwid.trim() === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
@@ -45,6 +58,6 @@ export default async function handler(req, res) {
 
   } catch (err) {
     console.error("ERROR:", err);
-    return res.status(200).send("Server sedang dalam pemeliharaan");
+    return res.status(200).send("Maintenance");
   }
 }
