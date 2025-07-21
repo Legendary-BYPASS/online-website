@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     } else if (statusCode === 1) {
       return res.status(200).send("Free");
     } else if (statusCode !== 0) {
-      return res.status(200).send($"Error: {statusCode}");
+      return res.status(200).send("Error");
     }
 
     // Proses login normal (status = 0)
