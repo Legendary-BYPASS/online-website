@@ -24,9 +24,21 @@ export default async function handler(req, res) {
     const data = await response.text();
     const lines = data.trim().split('\n');
 
-    const statusLine = lines[0];
-    const statusMatch = statusLine.match(/STATUS\s*=\s*(\d+)/);
-    const statusCode = statusMatch ? parseInt(statusMatch[1]) : -1;
+    const configLine = lines[0];
+    
+    // Parse konfigurasi dari baris pertama
+    const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
+    
+    if (!configMatch) {
+      return res.status(200).send("Format konfigurasi tidak valid");
+    }
+
+    const statusCode = parseInt(configMatch[1]);
+    const version = configMatch[2].trim();
+    const md5 = configMatch[3].trim();
+    const updateUrl = configMatch[4].trim();
+    const token = configMatch[5].trim();
+    const chatId = configMatch[6].trim();
 
     if (statusCode === 2) {
       return res.status(200).send("Maintenance");
@@ -45,9 +57,16 @@ export default async function handler(req, res) {
       if (storedHwid.trim() === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
         if (expiryDate > new Date()) {
-          const raw = `${user}|${expiryStr}|${now}`;
-          const encrypted = encrypt(raw);
-          return res.status(200).send(encrypted);
+          // Enkripsi konfigurasi
+          const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
+          const encryptedConfig = encrypt(configData);
+          
+          // Enkripsi data user
+          const userData = `${user}|${expiryStr}|${now}`;
+          const encryptedUser = encrypt(userData);
+          
+          // Gabungkan kedua enkripsi dengan pemisah baris baru
+          return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
           return res.status(200).send("Tidak aktif");
         }
