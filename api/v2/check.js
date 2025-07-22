@@ -13,8 +13,13 @@ function encrypt(text) {
 
 export default async function handler(req, res) {
   const { hwid } = req.method === 'POST' ? req.body : req.query;
-  const encryptedNotfound = encrypt("NOT_FOUND");
-  if (!hwid) return res.status(400).send(`${encryptedNotfound}`);
+  const encNotFound = encrypt("NOT_FOUND");
+  const encFreeMode = encrypt("FREE_MODE");
+  const encMaintenance = encrypt("MAINTENANCE");
+  const encError = encrypt("ERROR");
+  const encNotActive = encrypt("NOT_ACTIVE");
+  
+  if (!hwid) return res.status(400).send(`${encNotfound}`);
 
   try {
     const response = await fetch(`${PASTEBIN_URL}?t=${Date.now()}`, {
@@ -29,7 +34,7 @@ export default async function handler(req, res) {
     const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
     
     if (!configMatch) {
-      return res.status(200).send("Format konfigurasi tidak valid");
+      return res.status(200).send("INVALID_CONFIG");
     }
 
     const statusCode = parseInt(configMatch[1]);
@@ -45,20 +50,17 @@ export default async function handler(req, res) {
 
     // Handle Free Status (STATUS=1)
     if (statusCode === 1) {
-      const encryptedFree = encrypt("FREE_MODE");
-      return res.status(200).send(`${encryptedConfig}\n${encryptedFree}`);
+      return res.status(200).send(`${encryptedConfig}\n${encFreeMode}`);
     }
 
     // Handle Maintenance (STATUS=2)
     if (statusCode === 2) {
-      const encryptedMt = encrypt("MAINTENANCE");
-      return res.status(200).send(`${encryptedMt}`);
+      return res.status(200).send(`${encMaintenance}`);
     }
 
     // Handle Error Status
     if (statusCode !== 0) {
-      const encryptedError = encrypt("ERROR");
-      return res.status(200).send(`${encryptedError}`);
+      return res.status(200).send(`${encError}`);
     }
 
     // Proses login normal (STATUS=0)
@@ -74,17 +76,15 @@ export default async function handler(req, res) {
           const encryptedUser = encrypt(userData);
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
-          const encryptedNonaktif = encrypt("NOT_ACTIVE");
-          return res.status(200).send(`${encryptedNonaktif}`);
+          return res.status(200).send(`${encNotActive}`);
         }
       }
     }
 
-    return res.status(200).send(`${encryptedNotfound}`);
+    return res.status(200).send(`${encNotFound}`);
 
   } catch (err) {
-    console.error("ERROR:", err);
-    const encryptedError = encrypt("ERROR");
-    return res.status(200).send(`${encryptedError}`);
+    console.error("ERROR: ", err);
+    return res.status(200).send(`${encError}`);
   }
 }
