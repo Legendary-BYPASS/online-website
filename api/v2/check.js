@@ -13,7 +13,8 @@ function encrypt(text) {
 
 export default async function handler(req, res) {
   const { hwid } = req.method === 'POST' ? req.body : req.query;
-  if (!hwid) return res.status(400).send("HWID tidak ditemukan");
+  const encryptedNotfound = encrypt("NOT_FOUND");
+  if (!hwid) return res.status(400).send(`${encryptedNotfound}`);
 
   try {
     const response = await fetch(`${PASTEBIN_URL}?t=${Date.now()}`, {
@@ -25,8 +26,6 @@ export default async function handler(req, res) {
     const lines = data.trim().split('\n');
 
     const configLine = lines[0];
-    
-    // Parse konfigurasi dari baris pertama
     const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
     
     if (!configMatch) {
@@ -40,15 +39,29 @@ export default async function handler(req, res) {
     const token = configMatch[5].trim();
     const chatId = configMatch[6].trim();
 
-    if (statusCode === 2) {
-      return res.status(200).send("Maintenance");
-    } else if (statusCode === 1) {
-      return res.status(200).send("Free");
-    } else if (statusCode !== 0) {
-      return res.status(200).send("Error");
+    // Enkripsi konfigurasi (baris pertama selalu dikirim)
+    const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
+    const encryptedConfig = encrypt(configData);
+
+    // Handle Free Status (STATUS=1)
+    if (statusCode === 1) {
+      const encryptedFree = encrypt("FREE_MODE");
+      return res.status(200).send(`${encryptedConfig}\n${encryptedFree}`);
     }
 
-    // Proses login normal (status = 0)
+    // Handle Maintenance (STATUS=2)
+    if (statusCode === 2) {
+      const encryptedMt = encrypt("MAINTENANCE");
+      return res.status(200).send(`${encryptedMt}`);
+    }
+
+    // Handle Error Status
+    if (statusCode !== 0) {
+      const encryptedError = encrypt("ERROR");
+      return res.status(200).send(`${encryptedError}`);
+    }
+
+    // Proses login normal (STATUS=0)
     const now = new Date().toISOString();
 
     for (let i = 1; i < lines.length; i++) {
@@ -57,26 +70,21 @@ export default async function handler(req, res) {
       if (storedHwid.trim() === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
         if (expiryDate > new Date()) {
-          // Enkripsi konfigurasi
-          const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
-          const encryptedConfig = encrypt(configData);
-          
-          // Enkripsi data user
           const userData = `${user}|${expiryStr}|${now}`;
           const encryptedUser = encrypt(userData);
-          
-          // Gabungkan kedua enkripsi dengan pemisah baris baru
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
-          return res.status(200).send("Tidak aktif");
+          const encryptedNonaktif = encrypt("NOT_ACTIVE");
+          return res.status(200).send(`${encryptedNonaktif}`);
         }
       }
     }
 
-    return res.status(200).send("HWID tidak ditemukan");
+    return res.status(200).send(`${encryptedNotfound}`);
 
   } catch (err) {
     console.error("ERROR:", err);
-    return res.status(200).send("Maintenance");
+    const encryptedError = encrypt("ERROR");
+    return res.status(200).send(`${encryptedError}`);
   }
 }
