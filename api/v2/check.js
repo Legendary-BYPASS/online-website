@@ -59,6 +59,8 @@ export default async function handler(req, res) {
       }
     }
 
+    console.log("Parsed config:", config);
+    
     // Validasi config wajib
     if (!config.SERVER || !config.VERSI || !config.MD5 || !config.UPDATE || !config.TOKEN || !config.CHATID) {
       return res.status(200).send("INVALID_CONFIG");
