@@ -18,8 +18,8 @@ export default async function handler(req, res) {
   const encMaintenance = encrypt("MAINTENANCE");
   const encError = encrypt("ERROR");
   const encNotActive = encrypt("NOT_ACTIVE");
-
-  if (!hwid) return res.status(400).send(`${encNotFound}`);
+  
+  if (!hwid) return res.status(400).send(`${encNotfound}`);
 
   try {
     const response = await fetch(`${PASTEBIN_URL}?t=${Date.now()}`, {
@@ -27,73 +27,52 @@ export default async function handler(req, res) {
       headers: { 'Cache-Control': 'no-cache' }
     });
 
-    const text = await response.text();
-    const lines = text.trim().split('\n').map(line => line.trim());
+    const data = await response.text();
+    const lines = data.trim().split('\n');
 
-    const config = {};
-const accounts = [];
-let mode = '';
-
-for (const line of lines) {
-  const cleanLine = line.replace('\r', '').trim();
-
-  if (cleanLine.startsWith(';--main-configuration--')) {
-    mode = 'config';
-    continue;
-  }
-
-  if (cleanLine.startsWith(';--list-accounts--')) {
-    mode = 'accounts';
-    continue;
-  }
-
-  if (cleanLine.startsWith(';') || cleanLine === '') continue;
-
-  if (mode === 'config') {
-    const [rawKey, ...rest] = cleanLine.split('=');
-    if (rawKey && rest.length > 0) {
-      const key = rawKey.trim();
-      const value = rest.join('=').trim(); // menangani URL atau string panjang
-      config[key] = value;
-    }
-  } else if (mode === 'accounts') {
-    const parts = cleanLine.split('|');
-    if (parts.length === 3) {
-      const [user, expiryStr, storedHwid] = parts;
-      accounts.push({ user, expiryStr, storedHwid });
-    }
-  }
-}
+    const configLine = lines[0];
+    const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
     
-    // Validasi config wajib
-    if (!config.SERVER || !config.VERSI || !config.MD5 || !config.UPDATE || !config.TOKEN || !config.CHATID) {
+    if (!configMatch) {
       return res.status(200).send("INVALID_CONFIG");
     }
 
-    const statusCode = parseInt(config.SERVER);
+    const statusCode = parseInt(configMatch[1]);
+    const version = configMatch[2].trim();
+    const md5 = configMatch[3].trim();
+    const updateUrl = configMatch[4].trim();
+    const token = configMatch[5].trim();
+    const chatId = configMatch[6].trim();
 
-    const configData = `VERSI=${config.VERSI},MD5=${config.MD5},UPDATE=${config.UPDATE},TOKEN=${config.TOKEN},CHATID=${config.CHATID}`;
+    // Enkripsi konfigurasi (baris pertama selalu dikirim)
+    const configData = VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId};
     const encryptedConfig = encrypt(configData);
 
+    // Handle Free Status (STATUS=1)
     if (statusCode === 1) {
       return res.status(200).send(`${encryptedConfig}\n${encFreeMode}`);
     }
 
+    // Handle Maintenance (STATUS=2)
     if (statusCode === 2) {
       return res.status(200).send(`${encMaintenance}`);
     }
 
+    // Handle Error Status
     if (statusCode !== 0) {
       return res.status(200).send(`${encError}`);
     }
 
+    // Proses login normal (STATUS=0)
     const now = new Date().toISOString();
 
-    for (const acc of accounts) {
-      if (acc.storedHwid.trim() === hwid.trim()) {
-        const expiryDate = new Date(acc.expiryStr);
+    for (let i = 1; i < lines.length; i++) {
+      const [user, expiryStr, storedHwid] = lines[i].trim().split('|');
+
+      if (storedHwid.trim() === hwid.trim()) {
+        const expiryDate = new Date(expiryStr);
         if (expiryDate > new Date()) {
-          const userData = `${acc.user}|${acc.expiryStr}|${now}`;
+          const userData = ${user}|${expiryStr}|${now};
           const encryptedUser = encrypt(userData);
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
