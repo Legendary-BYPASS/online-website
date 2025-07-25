@@ -31,35 +31,39 @@ export default async function handler(req, res) {
     const lines = text.trim().split('\n').map(line => line.trim());
 
     const config = {};
-    const accounts = [];
+const accounts = [];
+let mode = '';
 
-    let mode = ''; // 'config' atau 'accounts'
+for (const line of lines) {
+  const cleanLine = line.replace('\r', '').trim();
 
-    for (const line of lines) {
-      if (line.startsWith(';--main-configuration--')) {
-        mode = 'config';
-        continue;
-      }
+  if (cleanLine.startsWith(';--main-configuration--')) {
+    mode = 'config';
+    continue;
+  }
 
-      if (line.startsWith(';--list-accounts--')) {
-        mode = 'accounts';
-        continue;
-      }
+  if (cleanLine.startsWith(';--list-accounts--')) {
+    mode = 'accounts';
+    continue;
+  }
 
-      if (line.startsWith(';') || line === '') continue; // Abaikan komentar dan baris kosong
+  if (cleanLine.startsWith(';') || cleanLine === '') continue;
 
-      if (mode === 'config') {
-        const [key, value] = line.split('=');
-        if (key && value) config[key.trim()] = value.trim();
-      } else if (mode === 'accounts') {
-        const [user, expiryStr, storedHwid] = line.split('|');
-        if (user && expiryStr && storedHwid) {
-          accounts.push({ user, expiryStr, storedHwid });
-        }
-      }
+  if (mode === 'config') {
+    const [rawKey, ...rest] = cleanLine.split('=');
+    if (rawKey && rest.length > 0) {
+      const key = rawKey.trim();
+      const value = rest.join('=').trim(); // menangani URL atau string panjang
+      config[key] = value;
     }
-
-    console.log("Parsed config:", config);
+  } else if (mode === 'accounts') {
+    const parts = cleanLine.split('|');
+    if (parts.length === 3) {
+      const [user, expiryStr, storedHwid] = parts;
+      accounts.push({ user, expiryStr, storedHwid });
+    }
+  }
+}
     
     // Validasi config wajib
     if (!config.SERVER || !config.VERSI || !config.MD5 || !config.UPDATE || !config.TOKEN || !config.CHATID) {
