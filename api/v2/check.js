@@ -11,6 +11,14 @@ function encrypt(text) {
   return encrypted;
 }
 
+function getJakartaISOString() {
+  const now = new Date();
+  // Tambah 7 jam untuk GMT+7 (WIB)
+  const jakartaTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+  // Format: "2025-07-25T17:36:02" (tanpa 'Z' di akhir)
+  return jakartaTime.toISOString().replace('Z', '');
+}
+
 export default async function handler(req, res) {
   const { hwid } = req.method === 'POST' ? req.body : req.query;
   const encryptedNotfound = encrypt("NOT_FOUND");
@@ -69,7 +77,7 @@ export default async function handler(req, res) {
     }
 
     // Proses login normal
-    const now = new Date().toISOString();
+    const now = getJakartaISOString();
     for (; i < lines.length; i++) {
       const [user, expiryStr, storedHwid] = lines[i].trim().split('|').map(part => part.trim());
 
