@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const PASTEBIN_URL = 'https://pastebin.com/raw/FCCNe66k';
+const PASTEBIN_URL = 'https://pastebin.com/raw/qjRa0CJQ';
 const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8'); // 32 byte
 const AES_IV = Buffer.from(process.env.AES_IV, 'utf8');   // 16 byte
 
@@ -18,8 +18,8 @@ export default async function handler(req, res) {
   const encMaintenance = encrypt("MAINTENANCE");
   const encError = encrypt("ERROR");
   const encNotActive = encrypt("NOT_ACTIVE");
-  
-  if (!hwid) return res.status(400).send(`${encNotfound}`);
+
+  if (!hwid) return res.status(400).send(encNotFound);
 
   try {
     const response = await fetch(`${PASTEBIN_URL}?t=${Date.now()}`, {
@@ -30,61 +30,86 @@ export default async function handler(req, res) {
     const data = await response.text();
     const lines = data.trim().split('\n');
 
-    const configLine = lines[0];
-    const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
-    
-    if (!configMatch) {
-      return res.status(200).send("INVALID_CONFIG");
-    }
+    let config = {};
+    let inConfig = false;
+    let inAccounts = false;
+    const accounts = [];
 
-    const statusCode = parseInt(configMatch[1]);
-    const version = configMatch[2].trim();
-    const md5 = configMatch[3].trim();
-    const updateUrl = configMatch[4].trim();
-    const token = configMatch[5].trim();
-    const chatId = configMatch[6].trim();
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith(';--main-configuration--')) {
+        inConfig = true;
+        inAccounts = false;
+        continue;
+      }
+      if (trimmed.startsWith(';--list-accounts--')) {
+        inConfig = false;
+        inAccounts = true;
+        continue;
+      }
 
-    // Enkripsi konfigurasi (baris pertama selalu dikirim)
-    const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
-    const encryptedConfig = encrypt(configData);
+      if (inConfig && trimmed.includes('=')) {
+        const [key, value] = trimmed.split('=');
+        config[key.trim()] = value.trim();
+      }
 
-    // Handle Free Status (STATUS=1)
-    if (statusCode === 1) {
-      return res.status(200).send(`${encryptedConfig}\n${encFreeMode}`);
-    }
-
-    // Handle Maintenance (STATUS=2)
-    if (statusCode === 2) {
-      return res.status(200).send(`${encMaintenance}`);
-    }
-
-    // Handle Error Status
-    if (statusCode !== 0) {
-      return res.status(200).send(`${encError}`);
-    }
-
-    // Proses login normal (STATUS=0)
-    const now = new Date().toISOString();
-
-    for (let i = 1; i < lines.length; i++) {
-      const [user, expiryStr, storedHwid] = lines[i].trim().split('|');
-
-      if (storedHwid.trim() === hwid.trim()) {
-        const expiryDate = new Date(expiryStr);
-        if (expiryDate > new Date()) {
-          const userData = `${user}|${expiryStr}|${now}`;
-          const encryptedUser = encrypt(userData);
-          return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
-        } else {
-          return res.status(200).send(`${encNotActive}`);
+      if (inAccounts && trimmed.includes('|')) {
+        const parts = trimmed.split('|');
+        if (parts.length === 3) {
+          accounts.push({
+            username: parts[0].trim(),
+            expiry: parts[1].trim(),
+            hwid: parts[2].trim()
+          });
         }
       }
     }
 
-    return res.status(200).send(`${encNotFound}`);
+    const statusCode = parseInt(config.SERVER || '1'); // default to 1 (FREE_MODE) if missing
+    const version = config.VERSI || '';
+    const md5 = config.MD5 || '';
+    const updateUrl = config.UPDATE || '';
+    const token = config.TOKEN || '';
+    const chatId = config.CHATID || '';
+
+    const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
+    const encryptedConfig = encrypt(configData);
+
+    // FREE MODE
+    if (statusCode === 1) {
+      return res.status(200).send(`${encryptedConfig}\n${encFreeMode}`);
+    }
+
+    // MAINTENANCE
+    if (statusCode === 2) {
+      return res.status(200).send(encMaintenance);
+    }
+
+    // ERROR STATUS
+    if (statusCode !== 0) {
+      return res.status(200).send(encError);
+    }
+
+    // LOGIN (STATUS = 0)
+    const now = new Date().toISOString();
+
+    for (const acc of accounts) {
+      if (acc.hwid === hwid) {
+        const expiryDate = new Date(acc.expiry);
+        if (expiryDate > new Date()) {
+          const userData = `${acc.username}|${acc.expiry}|${now}`;
+          const encryptedUser = encrypt(userData);
+          return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
+        } else {
+          return res.status(200).send(encNotActive);
+        }
+      }
+    }
+
+    return res.status(200).send(encNotFound);
 
   } catch (err) {
-    console.error("ERROR: ", err);
-    return res.status(200).send(`${encError}`);
+    console.error("ERROR:", err);
+    return res.status(200).send(encError);
   }
 }
