@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     const chatId = configMatch[6].trim();
 
     // Enkripsi konfigurasi (baris pertama selalu dikirim)
-    const configData = VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId};
+    const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
     const encryptedConfig = encrypt(configData);
 
     // Handle Free Status (STATUS=1)
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
       if (storedHwid.trim() === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
         if (expiryDate > new Date()) {
-          const userData = ${user}|${expiryStr}|${now};
+          const userData = `${user}|${expiryStr}|${now}`;
           const encryptedUser = encrypt(userData);
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
