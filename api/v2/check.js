@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 
 const PASTEBIN_URL = 'https://pastebin.com/raw/qjRa0CJQ';
-const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8'); // 32 byte
-const AES_IV = Buffer.from(process.env.AES_IV, 'utf8');   // 16 byte
+const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8');
+const AES_IV = Buffer.from(process.env.AES_IV, 'utf8');
 
 function encrypt(text) {
   const cipher = crypto.createCipheriv('aes-256-cbc', AES_KEY, AES_IV);
@@ -13,13 +13,9 @@ function encrypt(text) {
 
 export default async function handler(req, res) {
   const { hwid } = req.method === 'POST' ? req.body : req.query;
-  const encNotFound = encrypt("NOT_FOUND");
-  const encFreeMode = encrypt("FREE_MODE");
-  const encMaintenance = encrypt("MAINTENANCE");
-  const encError = encrypt("ERROR");
-  const encNotActive = encrypt("NOT_ACTIVE");
+  const encryptedNotfound = encrypt("NOT_FOUND");
   
-  if (!hwid) return res.status(400).send(`${encNotfound}`);
+  if (!hwid) return res.status(400).send(`${encryptedNotfound}`);
 
   try {
     const response = await fetch(`${PASTEBIN_URL}?t=${Date.now()}`, {
@@ -28,63 +24,73 @@ export default async function handler(req, res) {
     });
 
     const data = await response.text();
-    const lines = data.trim().split('\n');
+    const lines = data.trim().split('\n').filter(line => 
+      line.trim() !== '' && !line.trim().startsWith(';')
+    );
 
-    const configLine = lines[0];
-    const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
-    
-    if (!configMatch) {
-      return res.status(200).send("INVALID_CONFIG");
+    // Parse konfigurasi utama
+    const config = {};
+    let i = 0;
+    for (; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.includes('|')) break; // Berhenti saat menemukan akun pertama
+      
+      const [key, value] = line.split('=').map(part => part.trim());
+      if (key && value) config[key] = value;
     }
 
-    const statusCode = parseInt(configMatch[1]);
-    const version = configMatch[2].trim();
-    const md5 = configMatch[3].trim();
-    const updateUrl = configMatch[4].trim();
-    const token = configMatch[5].trim();
-    const chatId = configMatch[6].trim();
+    if (!config.STATUS || !config.VERSI) {
+      const encryptedError = encrypt("INVALID_CONFIG");
+      return res.status(200).send(`${encryptedError}`);
+    }
 
-    // Enkripsi konfigurasi (baris pertama selalu dikirim)
-    const configData = `VERSI=${version},MD5=${md5},UPDATE=${updateUrl},TOKEN=${token},CHATID=${chatId}`;
+    const statusCode = parseInt(config.STATUS);
+    
+    // Enkripsi konfigurasi utama
+    const configData = `VERSI=${config.VERSI},MD5=${config.MD5},UPDATE=${config.UPDATE},TOKEN=${config.TOKEN},CHATID=${config.CHATID}`;
     const encryptedConfig = encrypt(configData);
 
-    // Handle Free Status (STATUS=1)
+    // Handle Free Mode
     if (statusCode === 1) {
-      return res.status(200).send(`${encryptedConfig}\n${encFreeMode}`);
+      const encryptedFree = encrypt("FREE_MODE");
+      return res.status(200).send(`${encryptedConfig}\n${encryptedFree}`);
     }
 
-    // Handle Maintenance (STATUS=2)
+    // Handle Maintenance
     if (statusCode === 2) {
-      return res.status(200).send(`${encMaintenance}`);
+      const encryptedMt = encrypt("MAINTENANCE");
+      return res.status(200).send(`${encryptedConfig}\n${encryptedMt}`);
     }
 
     // Handle Error Status
     if (statusCode !== 0) {
-      return res.status(200).send(`${encError}`);
+      const encryptedError = encrypt("ERROR");
+      return res.status(200).send(`${encryptedError}`);
     }
 
-    // Proses login normal (STATUS=0)
+    // Proses login normal
     const now = new Date().toISOString();
+    for (; i < lines.length; i++) {
+      const [user, expiryStr, storedHwid] = lines[i].trim().split('|').map(part => part.trim());
 
-    for (let i = 1; i < lines.length; i++) {
-      const [user, expiryStr, storedHwid] = lines[i].trim().split('|');
-
-      if (storedHwid.trim() === hwid.trim()) {
+      if (storedHwid === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
         if (expiryDate > new Date()) {
           const userData = `${user}|${expiryStr}|${now}`;
           const encryptedUser = encrypt(userData);
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
-          return res.status(200).send(`${encNotActive}`);
+          const encryptedExpired = encrypt("SUBSCRIPTION_EXPIRED");
+          return res.status(200).send(`${encryptedExpired}`);
         }
       }
     }
 
-    return res.status(200).send(`${encNotFound}`);
+    return res.status(200).send(`${encryptedNotfound}`);
 
   } catch (err) {
-    console.error("ERROR: ", err);
-    return res.status(200).send(`${encError}`);
+    console.error("ERROR:", err);
+    const encryptedError = encrypt("SERVER_ERROR");
+    return res.status(200).send(`${encryptedError}`);
   }
 }
