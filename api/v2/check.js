@@ -29,6 +29,7 @@ export default async function handler(req, res) {
 
     const data = await response.text();
     const lines = data.trim().split('\n');
+    console.log(data);
 
     const configLine = lines[0];
     const configMatch = configLine.match(/STATUS\s*=\s*(\d+),\s*VERSI\s*=\s*([^,]+),\s*MD5\s*=\s*([^,]+),\s*UPDATE\s*=\s*([^,]+),\s*TOKEN\s*=\s*([^,]+),\s*CHATID\s*=\s*([^\s]+)/);
