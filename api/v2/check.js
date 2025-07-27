@@ -83,7 +83,7 @@ export default async function handler(req, res) {
 
       if (storedHwid === hwid.trim()) {
         const expiryDate = new Date(expiryStr);
-        if (expiryDate > new Date()) {
+        if (expiryDate > now) {
           const userData = `${user}|${expiryStr}|${now}`;
           const encryptedUser = encrypt(userData);
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
