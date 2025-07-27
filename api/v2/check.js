@@ -106,7 +106,7 @@ export default async function handler(req, res) {
           return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
         } else {
           const encryptedExpired = encrypt("SUBSCRIPTION_EXPIRED");
-          return res.status(200).send(`${encryptedExpired}`);
+          return res.status(200).send(`${encryptedExpired}\n{now}`);
         }
       }
     }
