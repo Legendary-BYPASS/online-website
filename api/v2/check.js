@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { DateTime } from 'luxon';
 
 const PASTEBIN_URL = 'https://pastebin.com/raw/qjRa0CJQ';
 const AES_KEY = Buffer.from(process.env.AES_KEY, 'utf8');
@@ -12,28 +13,19 @@ function encrypt(text) {
 }
 
 function getJakartaISOString() {
-  const options = {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  };
-  
-  const formatter = new Intl.DateTimeFormat('en-US', options);
-  const parts = formatter.formatToParts(new Date());
-  
-  const year = parts.find(p => p.type === 'year').value;
-  const month = parts.find(p => p.type === 'month').value;
-  const day = parts.find(p => p.type === 'day').value;
-  const hour = parts.find(p => p.type === 'hour').value;
-  const minute = parts.find(p => p.type === 'minute').value;
-  const second = parts.find(p => p.type === 'second').value;
-  
-  return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+  try {
+    const jakartaTime = DateTime.now().setZone('Asia/Jakarta');
+    
+    if (!jakartaTime.isValid) {
+      throw new Error(`Invalid time: ${jakartaTime.invalidReason}`);
+    }
+
+    return jakartaTime.toFormat("yyyy-MM-dd'T'HH:mm:ss");
+  } catch (error) {
+    console.error("Error getting Jakarta time:", error);
+    // Fallback ke waktu server (opsional)
+    return DateTime.now().toFormat("yyyy-MM-dd'T'HH:mm:ss");
+  }
 }
 
 export default async function handler(req, res) {
@@ -94,20 +86,31 @@ export default async function handler(req, res) {
     }
 
     // Proses login normal
-    const now = getJakartaISOString();
-    for (; i < lines.length; i++) {
-      const [user, expiryStr, storedHwid] = lines[i].trim().split('|').map(part => part.trim());
+    const now = DateTime.now().setZone('Asia/Jakarta');
 
-      if (storedHwid === hwid.trim()) {
-        const expiryDate = new Date(expiryStr);
-        if (expiryDate > now) {
-          const userData = `${user}|${expiryStr}|${now}`;
-          const encryptedUser = encrypt(userData);
-          return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
-        } else {
-          const encryptedExpired = encrypt("SUBSCRIPTION_EXPIRED");
-          return res.status(200).send(`${encryptedExpired}\n{now}`);
-        }
+    for (; i < lines.length; i++) {
+      const line = lines[i].trim();
+      const parts = line.split('|').map(p => p.trim());
+
+      if (parts.length !== 3) continue;
+
+      const [user, expiryStr, storedHwid] = parts;
+
+      if (!user || !expiryStr || !storedHwid) continue;
+
+      if (storedHwid !== hwid.trim()) continue;
+
+      const expiryDate = DateTime.fromFormat(expiryStr, 'yyyy-MM-dd HH:mm', { zone: 'Asia/Jakarta' });
+
+      if (!expiryDate.isValid) continue;
+
+      if (expiryDate > now) {
+        const userData = `${user}|${expiryDate.toFormat("yyyy-MM-dd HH:mm")}|${now.toFormat("yyyy-MM-dd HH:mm:ss")}`;
+        const encryptedUser = encrypt(userData);
+        return res.status(200).send(`${encryptedConfig}\n${encryptedUser}`);
+      } else {
+        const encryptedExpired = encrypt("SUBSCRIPTION_EXPIRED");
+        return res.status(200).send(`${encryptedExpired}`);
       }
     }
 
