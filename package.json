@@ -4,6 +4,6 @@
   "type": "module",
   "dependencies": {
   "express": "^4.17.1",
-  "@supabase/supabase-js": "^2.39.1"
+  "luxon": "^3.4.0"
   }
 }
