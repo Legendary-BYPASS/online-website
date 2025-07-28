@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     // Handle Maintenance
     if (statusCode === 2) {
       const encryptedMt = encrypt("MAINTENANCE");
-      return res.status(200).send(`${encryptedConfig}\n${encryptedMt}`);
+      return res.status(200).send(`${encryptedMt}`);
     }
 
     // Handle Error Status
